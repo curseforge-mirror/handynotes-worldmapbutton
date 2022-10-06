@@ -179,7 +179,6 @@ class CFScraper:
         curseforge_mapping = {k: v for k, v in curseforge_mapping.items() if v}
 
         log.info(f"Found URLS for {len(curseforge_mapping)} different versions!")
-        log.info(curseforge_mapping)
 
         for gv, info in curseforge_mapping.items():
             unsplit_url = info["url"]
