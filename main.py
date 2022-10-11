@@ -164,7 +164,7 @@ class CFScraper:
         }
 
         log.info(f"Found {len(download_element)} elements...")
-        for x in range(0, len(download_element), 2):
+        for x in range(0, len(download_element)-1, 2):
             print(x)
             print(download_element[x])
             print("---first---")
