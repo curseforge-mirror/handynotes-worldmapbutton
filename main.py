@@ -70,7 +70,6 @@ class CFScraper:
             ssl_context=self.scraper.ssl_context,
             max_retries=self.retries,
         )
-
         self.scraper.mount("https://", self.adaptor)
 
     def get_file_name(self, full_href):
@@ -176,7 +175,8 @@ class CFScraper:
         }
 
         log.info(f"Found {len(download_element)} elements...")
-        for x in range(0, len(download_element) - 1, 2):
+
+        for x in range(0, len(download_element), 2):
             curseforge_mapping[download_element[x].find(download_game_version_selector).contents[0].strip()] = {
                 "url": download_element[x + 1]
                 .select(download_url_version_selector)[0]
@@ -232,8 +232,8 @@ class CFScraper:
                 return
 
         count = 0
-        while count < 11:
-            if not count < 10:
+        while count < 4:
+            if not count < 3:
                 self.enable_scraper_api = True
 
             mapping = self.get_download_mapping()
