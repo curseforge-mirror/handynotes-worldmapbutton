@@ -4,6 +4,7 @@ import time
 import logging
 import cloudscraper
 from bs4 import BeautifulSoup as Soup
+from requests.adapters import Retry
 
 cf_mirror_addon_name = "Enter Addon Name Here For Local Testing"
 cf_mirror_addon_id = "0"
@@ -60,6 +61,17 @@ class CFScraper:
             interpreter="nodejs",
             # debug=True,
         )
+        self.retries = Retry(total=5, backoff_factor=0.1)
+        self.adaptor = cloudscraper.CipherSuiteAdapter(
+            cipherSuite=self.scraper.cipherSuite,
+            ecdhCurve=self.scraper.ecdhCurve,
+            server_hostname=self.scraper.server_hostname,
+            source_address=self.scraper.source_address,
+            ssl_context=self.scraper.ssl_context,
+            max_retries=self.retries,
+        )
+
+        self.scraper.mount("https://", self.adaptor)
 
     def get_file_name(self, full_href):
         download_url = full_href.replace(self.curseforge_download_base, self.curseforge_download_full)
@@ -122,7 +134,7 @@ class CFScraper:
                     f"\n -----\n{response.text}\n-----"
                 )
                 continue
-            file_name = payload['fileName'].replace(".zip", "")
+            file_name = payload["fileName"].replace(".zip", "")
             if not file_name.endswith(self.gv_name_scheme_lookup[gv]):
                 file_name = f"{file_name}{self.gv_name_scheme_lookup[gv]}"
             with open(f"{file_name}.zip", "wb") as f:
@@ -164,27 +176,7 @@ class CFScraper:
         }
 
         log.info(f"Found {len(download_element)} elements...")
-        for x in range(0, len(download_element)-1, 2):
-            print(x)
-            print(download_element[x])
-            print("---first---")
-            print(download_element[x].find(download_game_version_selector))
-            print(download_element[x].find(download_game_version_selector).contents)
-            print("---first.5---")
-            print(download_element[x].find(download_game_version_selector).contents[0])
-            print(download_element[x].find(download_game_version_selector).contents[0].strip())
-            print("---second---")
-            print(curseforge_mapping[download_element[x].find(download_game_version_selector).contents[0].strip()])
-            print("---third---")
-            print(download_element[x + 1])
-            print(download_element[x + 1].select(download_url_version_selector)[0])
-            print("---third.5---")
-            print(download_element[x + 1].select(download_url_version_selector)[0].get_attribute_list("href")[0])
-            print(download_element[x + 1].select(download_url_version_selector)[0].get_attribute_list("href")[0].replace(self.curseforge_download_base, ""))
-            print("---fourth---")
-            print(download_element[x + 1])
-            print(download_element[x + 1].select(download_url_version_selector)[0])
-            print(download_element[x + 1].select(download_url_version_selector)[0].get_attribute_list("href")[0])
+        for x in range(0, len(download_element) - 1, 2):
             curseforge_mapping[download_element[x].find(download_game_version_selector).contents[0].strip()] = {
                 "url": download_element[x + 1]
                 .select(download_url_version_selector)[0]
