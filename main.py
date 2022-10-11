@@ -164,9 +164,27 @@ class CFScraper:
         }
 
         log.info(f"Found {len(download_element)} elements...")
-        from pprint import pprint
-        pprint(dict(enumerate(item for item in download_element)))
         for x in range(0, len(download_element), 2):
+            print(x)
+            print(download_element[x])
+            print("---first---")
+            print(download_element[x].find(download_game_version_selector))
+            print(download_element[x].find(download_game_version_selector).contents)
+            print("---first.5---")
+            print(download_element[x].find(download_game_version_selector).contents[0])
+            print(download_element[x].find(download_game_version_selector).contents[0].strip())
+            print("---second---")
+            print(curseforge_mapping[download_element[x].find(download_game_version_selector).contents[0].strip()])
+            print("---third---")
+            print(download_element[x + 1])
+            print(download_element[x + 1].select(download_url_version_selector)[0])
+            print("---third.5---")
+            print(download_element[x + 1].select(download_url_version_selector)[0].get_attribute_list("href")[0])
+            print(download_element[x + 1].select(download_url_version_selector)[0].get_attribute_list("href")[0].replace(self.curseforge_download_base, ""))
+            print("---fourth---")
+            print(download_element[x + 1])
+            print(download_element[x + 1].select(download_url_version_selector)[0])
+            print(download_element[x + 1].select(download_url_version_selector)[0].get_attribute_list("href")[0])
             curseforge_mapping[download_element[x].find(download_game_version_selector).contents[0].strip()] = {
                 "url": download_element[x + 1]
                 .select(download_url_version_selector)[0]
