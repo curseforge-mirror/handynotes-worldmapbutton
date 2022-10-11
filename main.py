@@ -164,7 +164,7 @@ class CFScraper:
         }
 
         log.info(f"Found {len(download_element)} elements...")
-        log.info(download_element)
+        log.info(list(download_element))
         for x in range(0, len(download_element), 2):
             curseforge_mapping[download_element[x].find(download_game_version_selector).contents[0].strip()] = {
                 "url": download_element[x + 1]
